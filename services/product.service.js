@@ -1,5 +1,6 @@
 const { query } = require("express");
 const Products = require("../models/Products");
+const Order = require("../models/Order");
 
 exports.getAllProductService = async (page, size, query) => {
 
@@ -21,6 +22,28 @@ exports.getAllProductService = async (page, size, query) => {
     }
 
     return { products, count };
+};
+
+exports.getAllOrdersService = async (page, size, query) => {
+
+    let orders;
+    let count;
+
+    if (Object.keys(query).length > 0) {
+        orders = await Order.find(query)
+            .sort({ createdAt: 1 })
+            .skip(page * size)
+            .limit(size);
+        count = await Order.countDocuments(query);
+    } else {
+        orders = await Order.find(query)
+            .sort({ createdAt: 1 })
+            .skip(page * size)
+            .limit(size);
+        count = await Order.countDocuments();
+    }
+
+    return { orders, count };
 };
 
 
