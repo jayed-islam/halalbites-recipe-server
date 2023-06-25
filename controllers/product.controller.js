@@ -2,7 +2,7 @@ const Order = require("../models/Order");
 const Products = require("../models/Products");
 const { getAllProductService, getAllOrdersService } = require("../services/product.service");
 
-
+// all products getting
 exports.getAllProducts = async (req, res) => {
   try {
     const { page, size } = req.query;
@@ -23,7 +23,7 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-
+// order submit
 exports.orderSubmit = async (req, res) => {
   try {
     const orderNumber = await Order.countDocuments();
@@ -31,7 +31,6 @@ exports.orderSubmit = async (req, res) => {
       ...req.body,
       orderNumber: orderNumber + 1
     };
-
 
     const newOrder = new Order(orderData);
     await newOrder.save();
@@ -51,7 +50,7 @@ exports.orderSubmit = async (req, res) => {
 };
 
 
-
+// all orders
 exports.getAllOrders = async (req, res) => {
   try {
     const { page, size } = req.query;
@@ -72,7 +71,50 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 
+// express delivery
+exports.getAllExpressDelivery = async (req, res) => {
+  try {
+    const { page, size } = req.query;
 
+    let query = { deliveryType: "Express-delivery" };
+    const { orders, count } = await getAllOrdersService(Number(page), Number(size), query);
+
+    res.status(200).send({
+      status: "success",
+      data: orders,
+      count: count
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "fail",
+      error,
+    });
+  }
+};
+
+// regular delivery
+exports.getAllRegularDelivery = async (req, res) => {
+  try {
+    const { page, size } = req.query;
+
+    let query = { deliveryType: "Regular-delivery" };
+    const { orders, count } = await getAllOrdersService(Number(page), Number(size), query);
+
+    res.status(200).send({
+      status: "success",
+      data: orders,
+      count: count
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "fail",
+      error,
+    });
+  }
+};
+
+
+// get product by id
 exports.getDataById = async (req, res) => {
   try {
     const { id } = req.params;

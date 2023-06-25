@@ -8,6 +8,8 @@ router.post("/orderconfirm", productController.orderSubmit)
 // router.patch("/update/:id", productController.updateDataById)
 
 router.get("/products", productController.getAllProducts);
+router.get("/express", productController.getAllExpressDelivery);
+router.get("/regular", productController.getAllRegularDelivery);
 router.get("/orders", productController.getAllOrders)
 
 module.exports = router;
