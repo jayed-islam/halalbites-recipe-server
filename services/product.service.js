@@ -2,27 +2,28 @@ const { query } = require("express");
 const Products = require("../models/Products");
 const Order = require("../models/Order");
 
-exports.getAllProductService = async (page, size, query) => {
 
+exports.getAllProductService = async (query) => {
     let products;
     let count;
 
     if (Object.keys(query).length > 0) {
         products = await Products.find(query)
             .sort({ createdAt: 1 })
-            .skip(page * size)
-            .limit(size);
-        count = await Products.countDocuments(query);
+            .exec();
+
+        count = await Products.countDocuments(query).exec();
     } else {
         products = await Products.find(query)
             .sort({ createdAt: 1 })
-            .skip(page * size)
-            .limit(size);
-        count = await Products.countDocuments();
+            .exec();
+
+        count = await Products.countDocuments().exec();
     }
 
     return { products, count };
 };
+
 
 exports.getAllOrdersService = async (page, size, query) => {
 

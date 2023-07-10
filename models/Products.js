@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const productSchema = mongoose.Schema(
+const productSchema = new mongoose.Schema(
     {
         name: {
             type: String
@@ -28,6 +28,9 @@ const productSchema = mongoose.Schema(
             type: String
         },
         desc: {
+            type: String
+        },
+        category: {
             type: String
         },
         confirmationToken: String

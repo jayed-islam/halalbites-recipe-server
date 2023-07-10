@@ -5,10 +5,10 @@ const { getAllProductService, getAllOrdersService } = require("../services/produ
 // all products getting
 exports.getAllProducts = async (req, res) => {
   try {
-    const { page, size } = req.query;
 
     let query = {};
-    const { products, count } = await getAllProductService(Number(page), Number(size), query);
+
+    const { products, count } = await getAllProductService(query);
 
     res.status(200).send({
       status: "success",
@@ -22,6 +22,56 @@ exports.getAllProducts = async (req, res) => {
     });
   }
 };
+
+
+exports.getDataById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const productData = await Products.findById(id);
+
+    if (!productData) {
+      return res.status(404).json({
+        message: 'Data not found',
+        status: 'fail'
+      });
+    }
+
+    res.status(200).json({
+      message: 'Data retrieved successfully',
+      status: 'success',
+      data: productData
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const { category } = req.query;
+    const productData = await Products.find({ category: { $regex: category, $options: 'i' } });
+
+    if (!productData.length) {
+      return res.status(404).json({
+        message: 'No products found in the specified category',
+        status: 'fail'
+      });
+    }
+
+    res.status(200).json({
+      message: 'Products retrieved successfully',
+      status: 'success',
+      data: productData
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
 
 // order submit
 exports.orderSubmit = async (req, res) => {

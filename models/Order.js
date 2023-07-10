@@ -9,15 +9,15 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    address: {
+    phone: {
         type: String,
         required: true,
     },
-    mobile: {
+    district: {
         type: String,
         required: true,
     },
-    city: {
+    subDistrict: {
         type: String,
         required: true,
     },
@@ -25,7 +25,15 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    deliveryType: {
+    country: {
+        type: String,
+        required: true,
+    },
+    orderNotes: {
+        type: String,
+        required: true,
+    },
+    paymentType: {
         type: String,
         required: true,
     },
@@ -51,12 +59,12 @@ const orderSchema = new mongoose.Schema({
             total: {
                 type: Number,
                 required: true,
-            },
-            orderNumber: {
-                type: Number
             }
         },
     ],
+    orderNumber: {
+        type: Number
+    },
     orderTotal: {
         type: Number,
         required: true,
