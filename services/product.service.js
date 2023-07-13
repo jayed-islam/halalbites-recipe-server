@@ -3,6 +3,8 @@ const Products = require("../models/Products");
 const Order = require("../models/Order");
 
 
+
+// without pagination
 exports.getAllProductService = async (query) => {
     let products;
     let count;
@@ -24,27 +26,27 @@ exports.getAllProductService = async (query) => {
     return { products, count };
 };
 
+// with pagination
+exports.getAllCategoryProductService = async (page, size, query, sortId) => {
 
-exports.getAllOrdersService = async (page, size, query) => {
-
-    let orders;
+    let products;
     let count;
 
     if (Object.keys(query).length > 0) {
-        orders = await Order.find(query)
-            .sort({ createdAt: 1 })
+        products = await Products.find(query)
+            .sort({ price: sortId })
             .skip(page * size)
             .limit(size);
-        count = await Order.countDocuments(query);
+        count = await Products.countDocuments(query);
     } else {
-        orders = await Order.find(query)
-            .sort({ createdAt: 1 })
+        products = await Products.find(query)
+            .sort({ price: sortId })
             .skip(page * size)
             .limit(size);
-        count = await Order.countDocuments();
+        count = await Products.countDocuments();
     }
 
-    return { orders, count };
+    return { products, count };
 };
 
 
