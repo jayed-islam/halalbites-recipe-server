@@ -18,11 +18,7 @@ const userSchema = new mongoose.Schema(
         role: {
             type: String,
         },
-        confirmationToken: String,
-        confirmationTokenExpires: Date,
-        passwordChangedAt: Date,
-        passwordResetToken: String,
-        passwordResetExpires: Date,
+
         name: String,
         phone: String,
         district: String,
@@ -30,6 +26,15 @@ const userSchema = new mongoose.Schema(
         country: String,
         orderNotes: String,
         postalCode: String,
+        dateOfBirth: String,
+        address: String,
+        gender: String,
+        aboutYou: String,
+        confirmationToken: String,
+        confirmationTokenExpires: Date,
+        passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
     },
     {
         timestamps: true,

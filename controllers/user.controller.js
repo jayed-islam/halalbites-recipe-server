@@ -124,6 +124,72 @@ const loginAdmin = asyncHandler(async (req, res) => {
 });
 
 
+// Update user data
+const updateUserDataByEmail = asyncHandler(async (req, res) => {
+    try {
+        const { email } = req.query;
+        const newData = req.body;
+
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            return res.status(404).json({
+                message: 'User not found',
+                status: 'fail'
+            });
+        }
+
+        const updatedUser = await User.updateOne(
+            { email },
+            { $set: newData }
+        );
+
+        if (updatedUser.nModified === 0) {
+            return res.status(404).json({
+                message: 'Data not found',
+                status: 'fail'
+            });
+        }
+
+        res.status(200).json({
+            message: 'User data updated successfully',
+            status: 'success',
+            data: updatedUser
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
 
 
-module.exports = { registerUser, loginUser, currentUser, loginAdmin }
+// Get user data by email
+const getUserByEmail = async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found',
+                status: 'fail'
+            });
+        }
+
+        res.status(200).json({
+            message: 'User found',
+            status: 'success',
+            data: user
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+
+
+
+
+module.exports = { registerUser, loginUser, currentUser, loginAdmin, updateUserDataByEmail, getUserByEmail }

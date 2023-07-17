@@ -73,58 +73,182 @@ exports.getProductsByCategoryOLD = async (req, res) => {
 
 
 // all products getting
+// exports.getProductsByCategory = async (req, res) => {
+//   try {
+//     const { page, size, sortId, min, max } = req.query;
+//     const category = req.query.category || null;
+//     const search = req.query.search || null;
+
+//     let query = {};
+
+//     if (category && category.length) {
+//       query.category = category
+//     }
+
+//     if ((min && min.length) || (max && max.length)) {
+//       query.price = { $gt: Number(min), $lt: Number(max) };
+//     }
+
+//     // if (search && search.length) {
+//     //   query.category = { $regex: search, $options: "i" };
+//     // }
+
+//     // if (search && search.length) {
+//     //   query.name = { $regex: search, $options: "i" };
+//     // }
+//     // if (search && search.length) {
+//     //   const searchRegex = new RegExp(search, 'i');
+//     //   query.$or = [
+//     //     { name: { $regex: searchRegex } },
+//     //     { category: { $regex: searchRegex } },
+//     //     { desc: { $regex: searchRegex } }
+//     //   ];
+//     // }
+
+
+//     // if (search && search.length) {
+//     //   const searchRegex = new RegExp(search, 'i');
+//     //   query.$or = [
+//     //     { name: searchRegex },
+//     //     { category: searchRegex },
+//     //     { desc: searchRegex }
+//     //   ];
+//     // }
+
+//     // if (search && search.length) {
+//     //   const searchRegex = new RegExp(search, 'i');
+//     //   query.name = { $regex: searchRegex };
+//     // }
+
+//     const { products, count } = await getAllCategoryProductService(Number(page), Number(size), query, Number(sortId));
+
+//     res.status(200).send({
+//       status: "success",
+//       data: products,
+//       count: count
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: "fail",
+//       error,
+//     });
+//   }
+// };
+
+// exports.getProductsByCategory = async (req, res) => {
+//   try {
+//     const { page, size, sortId } = req.query;
+//     const min = req.query.min ? req.query.min : null;
+//     const max = req.query.max ? req.query.max : null;
+//     const category = req.query.category ? req.query.category : null;
+//     const search = req.query.search ? req.query.search : null;
+
+
+//     let query = {};
+
+//     console.log(category, search, min, max)
+
+
+//     if (category && category.length) {
+//       query.category = category;
+//     }
+//     else {
+//       // if (search && search.length) {
+//       const searchRegex = new RegExp(search, 'i');
+//       query.$or = [
+//         { name: { $regex: searchRegex } },
+//         { category: { $regex: searchRegex } },
+//         { desc: { $regex: searchRegex } }
+//       ];
+//       // }
+//     }
+
+
+
+
+
+
+//     if ((min && min.length) || (max && max.length)) {
+//       query.price = { $gt: Number(min), $lt: Number(max) };
+//     }
+
+
+//     const { products, count } = await getAllCategoryProductService(Number(page), Number(size), query, Number(sortId));
+
+//     res.status(200).send({
+//       status: "success",
+//       data: products,
+//       count: count
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: "fail",
+//       error,
+//     });
+//   }
+// };
+// exports.getProductsByCategory = async (req, res) => {
+//   try {
+//     const { page, size, sortId, min, max, category, search } = req.query;
+
+//     let query = {};
+
+//     console.log(category, search, min, max);
+
+//     if (category && category.length) {
+//       query.category = category;
+//     }
+
+//     if (search && search.length) {
+//       const searchRegex = new RegExp(search, 'i');
+//       query.$or = [
+//         { name: { $regex: searchRegex } },
+//         { category: { $regex: searchRegex } },
+//         { desc: { $regex: searchRegex } }
+//       ];
+//     }
+
+//     if ((min && min.length) || (max && max.length)) {
+//       query.price = { $gt: Number(min), $lt: Number(max) };
+//     }
+
+//     const { products, count } = await getAllCategoryProductService(Number(page), Number(size), query, Number(sortId));
+
+//     res.status(200).send({
+//       status: "success",
+//       data: products,
+//       count: count
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: "fail",
+//       error,
+//     });
+//   }
+// };
+
 exports.getProductsByCategory = async (req, res) => {
   try {
-    const { page, size, sortId, min, max } = req.query;
-    const category = req.query.category || null;
-    const search = req.query.search || null;
+    const { page, size, sortId, min, max, category, search } = req.query;
 
     let query = {};
 
-    // let query = { price: { $gt: Number(min), $lt: Number(max) } };
+    if (category !== "null" && category.length) {
+      query.category = category;
+    }
 
-    // const ragne = { price: { $gt: 50, $lt: 300 } }
-
-    console.log(min, max, search)
-
-    if (category && category.length) {
-      query.category = category
+    if (search !== "null" && search.length) {
+      const searchRegex = new RegExp(search, 'i');
+      query.$or = [
+        { name: { $regex: searchRegex } },
+        { category: { $regex: searchRegex } },
+        { desc: { $regex: searchRegex } }
+      ];
     }
 
     if ((min && min.length) || (max && max.length)) {
       query.price = { $gt: Number(min), $lt: Number(max) };
     }
-
-    // if (search && search.length) {
-    //   query.category = { $regex: search, $options: "i" };
-    // }
-
-    // if (search && search.length) {
-    //   query.name = { $regex: search, $options: "i" };
-    // }
-    // if (search && search.length) {
-    //   const searchRegex = new RegExp(search, 'i');
-    //   query.$or = [
-    //     { name: { $regex: searchRegex } },
-    //     { category: { $regex: searchRegex } },
-    //     { desc: { $regex: searchRegex } }
-    //   ];
-    // }
-
-
-    // if (search && search.length) {
-    //   const searchRegex = new RegExp(search, 'i');
-    //   query.$or = [
-    //     { name: searchRegex },
-    //     { category: searchRegex },
-    //     { desc: searchRegex }
-    //   ];
-    // }
-
-    // if (search && search.length) {
-    //   const searchRegex = new RegExp(search, 'i');
-    //   query.name = { $regex: searchRegex };
-    // }
 
     const { products, count } = await getAllCategoryProductService(Number(page), Number(size), query, Number(sortId));
 
@@ -143,31 +267,7 @@ exports.getProductsByCategory = async (req, res) => {
 
 
 
-// order submit
-exports.orderSubmit = async (req, res) => {
-  try {
-    const orderNumber = await Order.countDocuments();
-    const orderData = {
-      ...req.body,
-      orderNumber: orderNumber + 1
-    };
 
-    const newOrder = new Order(orderData);
-    await newOrder.save();
-
-
-    res.status(201).json({
-      status: "success",
-      message: "Successfully Submitted Order",
-      orderNumber: newOrder.orderNumber,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "fail",
-      error,
-    });
-  }
-};
 
 
 // all orders
@@ -190,6 +290,9 @@ exports.getAllOrders = async (req, res) => {
     });
   }
 };
+
+
+
 
 // express delivery
 exports.getAllExpressDelivery = async (req, res) => {
