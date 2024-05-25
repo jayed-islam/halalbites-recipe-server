@@ -1,6 +1,5 @@
-import User from "../models/User";
-
 const Recipe = require("../models/Recipe");
+const User = require("../models/User");
 
 const createRecipeIntoDB = async (recipeData) => {
   const result = await Recipe.create(recipeData);
@@ -132,7 +131,7 @@ const updateRecipeDetails = async (recipeId, userId) => {
   }
 };
 
-export const recipeService = {
+module.exports = {
   createRecipeIntoDB,
   getAllRecipesFromDB,
   addReactionToRecipeIntoDB,

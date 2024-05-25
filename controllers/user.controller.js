@@ -1,5 +1,6 @@
 const User = require("../models/User");
-const { userService } = require("../services/user.service");
+const { createUserIntoDB } = require("../services/user.service");
+
 const jwt = require("jsonwebtoken");
 
 const createUser = async (req, res) => {
@@ -21,7 +22,7 @@ const createUser = async (req, res) => {
         token: token,
       });
     }
-    const result = await userService.createUserIntoDB(userData);
+    const result = await createUserIntoDB(userData);
 
     const token = jwt.sign(
       { userId: existingUser._id, email: existingUser.email },
@@ -107,4 +108,4 @@ const getCurrentUser = async (req, res) => {
 //       .json({ success: false, message: "Server error", error: error.message });
 //   }
 // };
-export const userController = { createUser, getCurrentUser };
+module.exports = { createUser, getCurrentUser };

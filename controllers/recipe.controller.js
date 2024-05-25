@@ -1,6 +1,15 @@
 const Recipe = require("../models/Recipe");
-const { recipeService } = require("../services/recipe.service");
-const { createRecipe } = require("../services/recipeService");
+
+const {
+  createRecipeIntoDB,
+  getAllRecipesFromDB,
+  addReactionToRecipeIntoDB,
+  getSimilarRecipesIntoDB,
+  deductCoins,
+  updateRecipeDetails,
+  addCoinForCreator,
+  getSingleRecipeIntoDB,
+} = require("../services/recipe.service");
 
 const createRecipe = async (req, res) => {
   const recipeData = req.body;
@@ -16,7 +25,7 @@ const createRecipe = async (req, res) => {
       });
     }
 
-    const result = await recipeService.createRecipeIntoDB(recipeData);
+    const result = await createRecipeIntoDB(recipeData);
 
     res.status(201).json({
       success: true,
@@ -35,7 +44,7 @@ const getSingleRecipe = async (req, res) => {
   const { recipeId } = req.params;
 
   try {
-    const recipe = await recipeService.getSingleRecipeIntoDB(recipeId);
+    const recipe = await getSingleRecipeIntoDB(recipeId);
     if (!recipe) {
       return res
         .status(404)
@@ -60,7 +69,7 @@ const getAllRecipes = async (req, res) => {
   const pageSizeInt = parseInt(pageSize) || 11;
 
   try {
-    const recipes = await recipeService.getAllRecipesFromDB(
+    const recipes = await getAllRecipesFromDB(
       pageNumberInt,
       pageSizeInt,
       category,
@@ -87,7 +96,7 @@ const addReactionToRecipe = async (req, res) => {
   const { userId, reactionType } = req.body;
 
   try {
-    const updatedRecipe = await recipeService.addReactionToRecipeIntoDB(
+    const updatedRecipe = await addReactionToRecipeIntoDB(
       recipeId,
       userId,
       reactionType
@@ -106,10 +115,7 @@ const getSuggestedRecipes = async (req, res) => {
   const { categoryId, country } = req.query;
 
   try {
-    const result = await recipeService.getSimilarRecipesIntoDB(
-      categoryId,
-      country
-    );
+    const result = await getSimilarRecipesIntoDB(categoryId, country);
     res.status(200).json({
       success: true,
       message: "Similar recipes fetched successfully!",
@@ -130,9 +136,9 @@ const confirmRecipeTransaction = async (req, res) => {
   try {
     await userService.deductCoins(userId, 10);
 
-    await recipeService.addCoinForCreator(recipeId, 1);
+    await addCoinForCreator(recipeId, 1);
 
-    await recipeService.updateRecipeDetails(recipeId, userId);
+    await updateRecipeDetails(recipeId, userId);
 
     res
       .status(200)
@@ -146,7 +152,7 @@ const confirmRecipeTransaction = async (req, res) => {
   }
 };
 
-export const recipeController = {
+module.exports = {
   createRecipe,
   getAllRecipes,
   addReactionToRecipe,

@@ -1,18 +1,26 @@
 const express = require("express");
-const { userController } = require("../controllers/user.controller");
-const { recipeController } = require("../controllers/recipe.controller");
+
+const {
+  createRecipe,
+  getAllRecipes,
+  addReactionToRecipe,
+  getSuggestedRecipes,
+  confirmRecipeTransaction,
+  getSingleRecipe,
+} = require("../controllers/recipe.controller");
+
 const router = express.Router();
 
-router.post("/create", recipeController.createRecipe);
+router.post("/create", createRecipe);
 
-router.get("/:recipeId", recipeController.getSingleRecipe);
+router.get("/:recipeId", getSingleRecipe);
 
-router.post("/get-all", recipeController.getAllRecipes);
+router.post("/get-all", getAllRecipes);
 
-router.get("/suggestions", recipeController.getSuggestedRecipes);
+router.get("/suggestions", getSuggestedRecipes);
 
-router.post("/:recipeId/reactions", recipeController.addReactionToRecipe);
+router.post("/:recipeId/reactions", addReactionToRecipe);
 
-router.post("/confirm", recipeController.confirmRecipeTransaction);
+router.post("/confirm", confirmRecipeTransaction);
 
 module.exports = router;

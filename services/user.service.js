@@ -5,4 +5,4 @@ const createUserIntoDB = async (userData) => {
   return result;
 };
 
-export const userService = { createUserIntoDB };
+module.exports = { createUserIntoDB };

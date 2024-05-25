@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const colors = require("colors");
 const app = require("./app");
 require("dotenv").config();
 
@@ -7,7 +9,7 @@ const dbUrl = `mongodb+srv://${process.env.DB_NAME}:${process.env.DB_PASSWORD}@c
 mongoose
   .connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    console.log("Connected to MongoDB React_Training".red.bold);
+    console.log("Connected to MongoDB HalalBites".red.bold);
   })
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
