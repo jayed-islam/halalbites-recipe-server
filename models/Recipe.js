@@ -12,6 +12,10 @@ const recipeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    category: {
+      type: String,
+      required: true,
+    },
     creatorEmail: {
       type: String,
       required: true,
@@ -38,15 +42,7 @@ const recipeSchema = new mongoose.Schema(
       default: 0,
     },
     reactions: {
-      type: [
-        {
-          userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-          reactionType: {
-            type: String,
-            enum: ["like", "love"],
-          },
-        },
-      ],
+      type: [String],
       default: [],
     },
   },

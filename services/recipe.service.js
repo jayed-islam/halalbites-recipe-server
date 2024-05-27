@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Recipe = require("../models/Recipe");
 const User = require("../models/User");
 
@@ -8,7 +9,6 @@ const createRecipeIntoDB = async (recipeData) => {
 
 const getSingleRecipeIntoDB = async (recipeId) => {
   const recipe = await Recipe.findById(recipeId);
-
   return recipe;
 };
 
@@ -48,34 +48,30 @@ const getAllRecipesFromDB = async (
   return recipes;
 };
 
-const addReactionToRecipeIntoDB = async (recipeId, userId, reactionType) => {
+const addReactionToRecipeIntoDB = async (recipeId, userId) => {
   const recipe = await Recipe.findById(recipeId);
   if (!recipe) {
     throw new Error("Recipe not found");
   }
 
-  const existingReactionIndex = recipe.reactions.findIndex(
-    (reaction) => reaction.userId.toString() === userId
-  );
-  if (existingReactionIndex !== -1) {
-    recipe.reactions.splice(existingReactionIndex, 1);
+  if (recipe.reactions.includes(userId)) {
+    recipe.reactions = recipe.reactions.filter(
+      (reaction) => reaction !== userId
+    );
   } else {
-    recipe.reactions.push({ userId, reactionType });
+    recipe.reactions.push(userId);
   }
 
   await recipe.save();
   return recipe;
 };
 
-const getSimilarRecipesIntoDB = async (categoryId, country) => {
-  // Query recipes with the sam
-  const similarRecipes = await Recipe.find({
-    $or: [{ category: categoryId }, { country }],
-  }).limit(4);
+const getSimilarRecipesIntoDB = async (category) => {
+  const similarRecipes = await Recipe.find({ category: category }).limit(4);
   return similarRecipes;
 };
 
-const deductCoins = async (userId, amount) => {
+const reduceCoinsFromUser = async (userId, amount) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -101,7 +97,7 @@ const addCoinForCreator = async (recipeId, amount) => {
     }
 
     const creatorEmail = recipe.creatorEmail;
-    const creator = await User.findById(creatorEmail);
+    const creator = await User.findOne({ email: creatorEmail });
 
     if (!creator) {
       throw new Error("Creator not found");
@@ -136,7 +132,7 @@ module.exports = {
   getAllRecipesFromDB,
   addReactionToRecipeIntoDB,
   getSimilarRecipesIntoDB,
-  deductCoins,
+  reduceCoinsFromUser,
   updateRecipeDetails,
   addCoinForCreator,
   getSingleRecipeIntoDB,

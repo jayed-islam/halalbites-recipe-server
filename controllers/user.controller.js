@@ -13,28 +13,29 @@ const createUser = async (req, res) => {
         { userId: existingUser._id, email: existingUser.email },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1h",
+          expiresIn: "1d",
         }
       );
-      return res.status(400).json({
-        success: false,
+      return res.status(200).json({
+        success: true,
         message: "User already exists",
         token: token,
       });
     }
+
     const result = await createUserIntoDB(userData);
 
     const token = jwt.sign(
-      { userId: existingUser._id, email: existingUser.email },
+      { userId: result._id, email: result.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "1d",
       }
     );
 
     res.status(201).json({
       success: true,
-      message: "User created succesfully!",
+      message: "User created successfully!",
       data: result,
       token: token,
     });
@@ -66,46 +67,29 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-// const purchaseCoins = async (req, res) => {
-//   const { userId, coinsPackage } = req.body; // coinsPackage can be 100, 500, or 1000
+const purchaseCoins = async (req, res) => {
+  const { userId, coinsPackage } = req.body;
+  try {
+    console.log(purchaseCoins, userId);
+    if (coinsPackage) {
+      const result = await User.findByIdAndUpdate(userId, {
+        $inc: { coin: coinsPackage },
+      });
 
-//   try {
-//     // Call payment gateway service to process payment
-//     const paymentResult = await paymentGateway.processPayment(coinsPackage);
-
-//     // If payment is successful, update user's coin balance
-//     if (paymentResult.success) {
-//       // Update user's coin balance based on the selected coins package
-//       let additionalCoins;
-//       switch (coinsPackage) {
-//         case 100:
-//           additionalCoins = 100;
-//           break;
-//         case 500:
-//           additionalCoins = 500;
-//           break;
-//         case 1000:
-//           additionalCoins = 1000;
-//           break;
-//         default:
-//           additionalCoins = 0;
-//       }
-
-//       // Update user's coin balance
-//       await User.findByIdAndUpdate(userId, { $inc: { coin: additionalCoins } });
-
-//       // Redirect user to all recipe pages or recipe details
-//       res
-//         .status(200)
-//         .json({ success: true, message: "Coins purchased successfully" });
-//     } else {
-//       // If payment fails, return error message
-//       res.status(400).json({ success: false, message: "Payment failed" });
-//     }
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ success: false, message: "Server error", error: error.message });
-//   }
-// };
-module.exports = { createUser, getCurrentUser };
+      return res.status(200).json({
+        success: true,
+        message: "Coins purchased successfully",
+        data: result,
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: "Payment failed" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
+  }
+};
+module.exports = { createUser, getCurrentUser, purchaseCoins };

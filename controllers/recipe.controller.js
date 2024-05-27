@@ -5,7 +5,7 @@ const {
   getAllRecipesFromDB,
   addReactionToRecipeIntoDB,
   getSimilarRecipesIntoDB,
-  deductCoins,
+  reduceCoinsFromUser,
   updateRecipeDetails,
   addCoinForCreator,
   getSingleRecipeIntoDB,
@@ -93,14 +93,12 @@ const getAllRecipes = async (req, res) => {
 
 const addReactionToRecipe = async (req, res) => {
   const { recipeId } = req.params;
-  const { userId, reactionType } = req.body;
+  const { userId } = req.body;
+
+  console.log(req.body);
 
   try {
-    const updatedRecipe = await addReactionToRecipeIntoDB(
-      recipeId,
-      userId,
-      reactionType
-    );
+    const updatedRecipe = await addReactionToRecipeIntoDB(recipeId, userId);
     return res.json({
       success: true,
       message: "Reacted this Recipe",
@@ -112,10 +110,10 @@ const addReactionToRecipe = async (req, res) => {
 };
 
 const getSuggestedRecipes = async (req, res) => {
-  const { categoryId, country } = req.query;
+  const { category } = req.query;
 
   try {
-    const result = await getSimilarRecipesIntoDB(categoryId, country);
+    const result = await getSimilarRecipesIntoDB(category);
     res.status(200).json({
       success: true,
       message: "Similar recipes fetched successfully!",
@@ -134,16 +132,30 @@ const confirmRecipeTransaction = async (req, res) => {
   const { userId, recipeId } = req.body;
 
   try {
-    await userService.deductCoins(userId, 10);
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Recipe not found" });
+    }
 
+    if (recipe.purchased_by.includes(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "User has already purchased this recipe",
+      });
+    }
+
+    await reduceCoinsFromUser(userId, 10);
     await addCoinForCreator(recipeId, 1);
-
     await updateRecipeDetails(recipeId, userId);
 
-    res
-      .status(200)
-      .json({ success: true, message: "Transaction confirmed successfully!" });
+    return res.status(200).json({
+      success: true,
+      message: "Transaction confirmed successfully!",
+    });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error confirming transaction",
